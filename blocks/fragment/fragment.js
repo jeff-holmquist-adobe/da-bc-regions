@@ -12,6 +12,12 @@ import {
   loadSections,
 } from '../../scripts/aem.js';
 
+import {
+  getPreferredLocale,
+  getSitemapIndex,
+  computeRegionalizedHref,
+} from '../../scripts/region.js';
+
 /**
  * Loads a fragment.
  * @param {string} path The path to the fragment
@@ -19,7 +25,17 @@ import {
  */
 export async function loadFragment(path) {
   if (path) { //  && path.startsWith('/')
-    const resp = await fetch(`${path}.plain.html`);
+    let resolvedPath = path;
+    try {
+      const preferred = getPreferredLocale();
+      const index = await getSitemapIndex();
+      const absolute = new URL(path, window.location.origin).href;
+      const localizedHref = computeRegionalizedHref(absolute, preferred, index);
+      resolvedPath = new URL(localizedHref, window.location.origin).pathname;
+    } catch (e) {
+      // ignore and use original path
+    }
+    const resp = await fetch(`${resolvedPath}.plain.html`);
     if (resp.ok) {
       const main = document.createElement('main');
       main.innerHTML = await resp.text();
@@ -35,6 +51,7 @@ export async function loadFragment(path) {
 
       decorateMain(main);
       await loadSections(main);
+      if (window.localizeLinks) window.localizeLinks(main);
       return main;
     }
   }

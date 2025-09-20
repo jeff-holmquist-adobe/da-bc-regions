@@ -16,6 +16,11 @@ import {
   toClassName,
   toCamelCase,
 } from './aem.js';
+import {
+  detectAndStorePreferredLocale,
+  localizeLinks,
+  initLinkLocalizationObservers,
+} from './region.js';
 
 /**
  * Builds hero block and prepends to main in a new section.
@@ -140,6 +145,7 @@ export function decorateMain(main) {
  */
 async function loadEager(doc) {
   doc.documentElement.lang = 'en';
+  detectAndStorePreferredLocale();
   decorateTemplateAndTheme();
   if (getMetadata('breadcrumbs').toLowerCase() === 'true') {
     doc.body.dataset.breadcrumbs = true;
@@ -172,16 +178,20 @@ async function loadLazy(doc) {
 
   const main = doc.querySelector('main');
   await loadSections(main);
+  await localizeLinks(main);
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
 
-  loadHeader(doc.querySelector('header'));
-  loadFooter(doc.querySelector('footer'));
+  await loadHeader(doc.querySelector('header'));
+  await localizeLinks(doc.querySelector('header'));
+  await loadFooter(doc.querySelector('footer'));
+  await localizeLinks(doc.querySelector('footer'));
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
+  initLinkLocalizationObservers();
 }
 
 /**
