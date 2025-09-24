@@ -120,27 +120,9 @@ function buildIndex(json) {
 export async function getSitemapIndex() {
   if (sitemapIndexPromise) return sitemapIndexPromise;
 
-  // try sessionStorage cache
-  try {
-    const cached = sessionStorage.getItem('sitemap-index-cache');
-    if (cached) {
-      const { ts, json } = JSON.parse(cached);
-      if (ts && (Date.now() - ts) < 10 * 60 * 1000) { // 10 minutes
-        const idx = buildIndex(json);
-        sitemapIndexPromise = Promise.resolve(idx);
-        return sitemapIndexPromise;
-      }
-    }
-  } catch (e) {
-    // ignore
-  }
-
   sitemapIndexPromise = fetch('/sitemap.json')
     .then((r) => (r.ok ? r.json() : { data: [] }))
-    .then((json) => {
-      try { sessionStorage.setItem('sitemap-index-cache', JSON.stringify({ ts: Date.now(), json })); } catch (e) { /* ignore */ }
-      return buildIndex(json);
-    })
+    .then((json) => buildIndex(json))
     .catch(() => ({ paths: new Set(), regionsByLang: new Map() }));
 
   return sitemapIndexPromise;
