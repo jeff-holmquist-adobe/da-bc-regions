@@ -84,20 +84,20 @@
       {
         "component": "reference",
         "valueType": "string",
-        "name": ".cards-card-image img[src]",
+        "name": "div:nth-child(1) img[src]",
         "label": "Image",
         "multi": false
       },
       {
         "component": "text",
         "valueType": "string",
-        "name": ".cards-card-image img[alt]",
+        "name": "div:nth-child(1) img[alt]",
         "label": "Image Alt",
         "multi": false
       },
       {
         "component": "richtext",
-        "name": ".cards-card-body",
+        "name": "div:nth-child(2)",
         "value": "",
         "label": "Text",
         "valueType": "string"
