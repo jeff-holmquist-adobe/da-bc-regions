@@ -29,20 +29,20 @@
         {
           "component": "reference",
           "valueType": "string",
-          "name": "div:nth-child(1) img[src]",
+          "name": ".cards-card-image img[src]",
           "label": "Image",
           "multi": false
         },
         {
           "component": "text",
           "valueType": "string",
-          "name": "div:nth-child(1) img[alt]",
+          "name": ".cards-card-image img[alt]",
           "label": "Image Alt",
           "multi": false
         },
         {
           "component": "richtext",
-          "name": "div:nth-child(2)",
+          "name": ".cards-card-body",
           "value": "",
           "label": "Text",
           "valueType": "string"
